@@ -2,12 +2,14 @@ import * as SubscriberService from "./subscriber.service";
 import { createResponse } from "../../common/helper/response.hepler";
 import asyncHandler from "express-async-handler";
 import { type Request, type Response } from "express";
+import { IUser } from "../user/user.dto";
 
 export const createSubscriber = asyncHandler(
   async (req: Request, res: Response) => {
+    const user = req.user as IUser;
     const result = await SubscriberService.createSubscriber({
       ...req.body,
-      userId: req?.user?.id,
+      userId: user.id,
     });
     res.send(createResponse(result, "Subscriber created sucssefully"));
   }
@@ -15,11 +17,12 @@ export const createSubscriber = asyncHandler(
 
 export const updateSubscriber = asyncHandler(
   async (req: Request, res: Response) => {
+    const user = req.user as IUser;
     const result = await SubscriberService.updateSubscriber(
       Number(req.params.id),
       {
         ...req.body,
-        userId: req?.user?.id,
+        userId: user.id,
       }
     );
     res.send(createResponse(result, "Subscriber updated sucssefully"));
