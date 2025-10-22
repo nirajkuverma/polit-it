@@ -4,10 +4,11 @@ import * as subscriptionService from "../subscription/subscription.service";
 import { createResponse } from "../../common/helper/response.hepler";
 import asyncHandler from "express-async-handler";
 import { type Request, type Response } from "express";
-
+import { type IUser } from "../user/user.dto";
 export const createApiLog = asyncHandler(
   async (req: Request, res: Response) => {
-    const sub = await subService.getUpdateSubscription(req.user?.id as number);
+    const user = req.user as IUser;
+    const sub = await subService.getUpdateSubscription(user.id as number);
     if (!sub) {
       res.send(createResponse("You do not have a valid subscription", "error"));
     } else {
@@ -15,13 +16,13 @@ export const createApiLog = asyncHandler(
         sub.id
       );
       const todayLog = await ApiLogService.getApiTodaysLogsByUser(
-        req.user?.id as number
+        user.id as number
       );
 
       if (subscription.api_call < todayLog.length) {
         //fetch prompt and do the action
         const r = await ApiLogService.createApiLog({
-          userId: Number(req.user?.id),
+          userId: Number(user.id),
           key: "1",
         });
         res.send(createResponse(r, "Response send"));
