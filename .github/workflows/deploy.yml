@@ -38,7 +38,7 @@ jobs:
         run: |
           rsync -avz --delete \
             -e "ssh -o StrictHostKeyChecking=no" \
-            dist/ \
+            dist \
             package.json \
             package-lock.json \
             .env \
