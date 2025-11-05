@@ -8,6 +8,11 @@ const router = Router();
 
 router
   .get("/", roleAuth(["ADMIN", "USER"]), ApiLogController.getAllApiLog)
+  .get(
+    "/dashboard",
+    roleAuth(["ADMIN", "USER"]),
+    ApiLogController.getDashboardApi
+  )
   .get("/:id", roleAuth(["ADMIN", "USER"]), ApiLogController.getApiLogById)
   .delete("/:id", roleAuth(["ADMIN"]), ApiLogController.deleteApiLog)
   .post(
