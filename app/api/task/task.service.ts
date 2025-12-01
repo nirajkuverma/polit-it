@@ -64,5 +64,5 @@ export const getAllTasks = async () => {
 export const getTasksByRole = async (role: string) => {
   const query = "SELECT id, role, content FROM task WHERE role = ?";
   const [rows] = await pool.execute<RowDataPacket[]>(query, [role]);
-  return rows;
+  return rows[0] || null;
 };

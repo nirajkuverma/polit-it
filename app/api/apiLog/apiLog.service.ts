@@ -83,7 +83,7 @@ export const getApiTodaysLogsByUserNKey = async (
   key: string
 ) => {
   const query =
-    "SELECT id, userId, `key`, `date`, `time` FROM api_log FROM api_log WHERE userId = ? AND key = ? AND date = CURDATE()";
+    "SELECT id, userId, `key`, `date`, `time` FROM api_log WHERE userId = ? AND `key` = ? AND date = CURDATE()";
   const [rows] = await pool.execute<RowDataPacket[]>(query, [userId, key]);
   return rows;
 };

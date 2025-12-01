@@ -9,7 +9,7 @@ export const createSubscriber = async (data: ISubscriber) => {
   const values = [
     data.userId,
     data.subId,
-    getDateFromToday(Number(data.isExpired)),
+    await getDateFromToday(Number(data.isExpired)),
   ];
   const [result] = await pool.execute<ResultSetHeader>(query, values);
   return { id: result.insertId, ...data };
@@ -100,7 +100,7 @@ export const getUsersBySubscription = async (subId: number) => {
 
 export const getMySubscriptionDetail = async (userId: number) => {
   const query =
-    "SELECT b.*, a.isExpired FROM subscriber a left join subscription b on b.id = a.subId WHERE userId = ? order by a.id desc limit 1";
+    "SELECT b.*, a.isExpired FROM subscriber a left join subscription b on b.id = a.subId WHERE a.userId = ? order by a.id desc limit 1";
   const [rows] = await pool.execute<RowDataPacket[]>(query, [userId]);
   if (Array.isArray(rows) && rows.length > 0) {
     return rows[0];
@@ -117,13 +117,12 @@ export const getUpdateSubscription = async (userId: number) => {
     : null;
 
   // If no subscription or expired
-  if (!subExpiry || subExpiry < today) {
+  if (!subExpiry || isNaN(subExpiry?.getTime() ?? NaN) || subExpiry < today) {
     // Get default free subscription
     const defaultSubscription = "SELECT * FROM subscription WHERE id = ?";
     const [rows] = await pool.execute<RowDataPacket[]>(defaultSubscription, [
       1,
     ]);
-
     if (Array.isArray(rows) && rows.length > 0) {
       const defaultSub = rows[0];
 
@@ -135,7 +134,7 @@ export const getUpdateSubscription = async (userId: number) => {
       const res = await createSubscriber({
         userId,
         subId: defaultSub.id,
-        isExpired: String(expiryDate), // pass expiry date
+        isExpired: defaultSub.day, // pass expiry date
       });
 
       return res; // return newly created subscription

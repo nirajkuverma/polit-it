@@ -18,7 +18,7 @@ router
   .post(
     "/",
     roleAuth(["ADMIN", "USER"]),
-    ApiLogValidator.createRecord,
+    // ApiLogValidator.createRecord,
     catchError,
     ApiLogController.createApiLog
   )
